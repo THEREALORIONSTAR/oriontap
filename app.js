@@ -1,11 +1,16 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 const $ = id => document.getElementById(id);
+const API_BASE = new URLSearchParams(location.search).get('api') || '';
 const clock = () => {
   const now = new Date();
   $('clock').textContent = new Intl.DateTimeFormat('en-NG',{timeZone:'Africa/Lagos',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
   $('clock-date').textContent = new Intl.DateTimeFormat('en-NG',{timeZone:'Africa/Lagos',weekday:'long',day:'numeric',month:'short',year:'numeric'}).format(now);
 };
+if (!tg?.initData) {
+  $('tap').disabled=true;
+  $('daily').disabled=true;
+}
 clock(); setInterval(clock,1000);
 let player = null;
 function render(p) {
@@ -18,7 +23,7 @@ function render(p) {
 }
 async function callApi(path, method='GET') {
   const initData = tg?.initData || '';
-  const response = await fetch(path,{method,headers:{'Content-Type':'application/json','X-Telegram-Init-Data':initData}});
+  const response = await fetch(`${API_BASE}${path}`,{method,headers:{'Content-Type':'application/json','X-Telegram-Init-Data':initData}});
   let data; try { data = await response.json(); } catch { data = {}; }
   if (!response.ok) throw new Error(data.error || 'Could not sync with OrionTap.');
   return data;
@@ -45,6 +50,7 @@ $('daily').addEventListener('click',async()=>{
   finally { $('daily').disabled=false; }
 });
 $('share').addEventListener('click',async()=>{
+  if (!tg?.initData) { $('notice').textContent='Open this page through Telegram to use your personal invite link.'; return; }
   const link=$('ref-link').textContent;
   if (!link.startsWith('https://t.me/')) { $('notice').textContent='Your personal invite link appears after opening in Telegram.'; return; }
   const shareUrl=`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('join me on OrionTap and mine free points')}`;

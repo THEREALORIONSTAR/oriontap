@@ -8,6 +8,7 @@ OrionTap is a Telegram tap-to-earn points demo: 1 tap costs 1 energy and earns 1
 2. On the backend host, install Python 3.10+ and the packages in `requirements.txt` (`pip install -r requirements.txt`). Put the token in the environment variable `BOT_TOKEN`. Do not paste it into the website or commit it to GitHub. Start the bot with `python bot.py`.
 3. Set `BOT_USERNAME` to the username without `@`, and `MINI_APP_URL` to the deployed HTTPS Mini App address. Set `ORIONTAP_DB` to a persistent writable file path on the backend host. If the host's disk is ephemeral, configure persistent storage before using it for live accounts.
 4. Telegram requires the web app URL to be HTTPS. In BotFather, use `/setdomain` for the deployed site domain and follow BotFather's Mini App setup to add its URL as the bot's menu button. The `/start` response also includes an Open OrionTap button once `MINI_APP_URL` is set.
+5. The bot's API and GitHub Pages are separate origins, so set `WEB_ORIGIN=https://therealorionstar.github.io` on the backend and set the Mini App URL to `https://therealorionstar.github.io/oriontap/?api=https%3A%2F%2FYOUR-BACKEND-HOST`. Replace `YOUR-BACKEND-HOST` with the HTTPS origin of the Python backend. Keep the `api` value URL-encoded. The browser's app requests then use that API host and the backend only permits the configured Pages origin.
 
 ## GitHub Pages
 

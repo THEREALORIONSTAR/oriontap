@@ -20,6 +20,7 @@ DB_PATH = Path(os.environ.get("ORIONTAP_DB", ROOT / "oriontap.sqlite3"))
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 BOT_USERNAME = os.environ.get("BOT_USERNAME", "").strip().lstrip("@")
 MINI_APP_URL = os.environ.get("MINI_APP_URL", "").strip()
+WEB_ORIGIN = os.environ.get("WEB_ORIGIN", "").strip().rstrip("/")
 API_HOST = os.environ.get("API_HOST", "0.0.0.0")
 API_PORT = int(os.environ.get("PORT", "8080"))
 MAX_ENERGY = 500
@@ -170,6 +171,21 @@ def authorized_user():
 
 def api_player(user):
     return get_player(user["id"], user.get("username", ""), user.get("first_name", ""))
+
+
+@api.after_request
+def cors(response):
+    if WEB_ORIGIN and request.headers.get("Origin") == WEB_ORIGIN:
+        response.headers["Access-Control-Allow-Origin"] = WEB_ORIGIN
+        response.headers["Vary"] = "Origin"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-Telegram-Init-Data"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
+
+
+@api.route("/api/<path:unused>", methods=["OPTIONS"])
+def api_preflight(unused):
+    return "", 204
 
 
 @api.get("/api/health")
