@@ -68,6 +68,7 @@ function render() {
     $('upgrade').disabled = player.points < upgradeCost();
     $('upgrade').textContent = `Upgrade tap · ${upgradeCost()} points`;
     $('tap-power').textContent = `${player.tapPower} point${player.tapPower === 1 ? '' : 's'} per tap`;
+    $('tap-label').textContent = `1 tap = ${player.tapPower} point${player.tapPower === 1 ? '' : 's'}`;
   }
   save();
 }
